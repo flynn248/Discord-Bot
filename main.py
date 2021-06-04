@@ -6,6 +6,8 @@ import json
 import random
 from replit import db
 
+from keep_alive import keep_alive
+
 client = discord.Client()
 
 sad_words = ["sad", "depressed", "unhappy", "angry", "miserable", "depressing"]
@@ -69,7 +71,7 @@ async def on_message(message):
   if db["responding"]:
     options = starter_encouragements #encouragement options
     if "encouragements" in db.keys():
-      options = options.extend(db["encouragements"])
+      options = options + (list(db["encouragements"]))
 
     if any(work in message.content for work in sad_words): #if sad word found, send encouraging message
       await message.channel.send(random.choice(options))
@@ -90,10 +92,10 @@ async def on_message(message):
     await message.channel.send(encouragements)
     return
 
-  if message.content.startswith("$lists"):
+  if message.content.startswith("$list"):
     encouragements = []
     if "encouragements" in db.keys():
-      encouragements = db["encouragements"]
+      encouragements + (list(db["encouragements"]))
     await message.channel.send(encouragements)
     return
   
@@ -113,4 +115,5 @@ async def on_message(message):
     $inspire: Inspirational message
     $daddy: Dad joke""")
 
+keep_alive()
 client.run(os.getenv('TOKEN'))
